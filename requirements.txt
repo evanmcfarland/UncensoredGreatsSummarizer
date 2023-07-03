@@ -2,3 +2,4 @@ sumy
 flask
 gunicorn
 nltk
+numpy
