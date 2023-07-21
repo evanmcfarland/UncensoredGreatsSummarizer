@@ -1,26 +1,16 @@
-# LED Base Summarizer:
-
+# LED Base Summarizer via HugginFace:
 from flask import Flask, request, jsonify
-import torch
-from transformers import pipeline
+import requests
+import os
 
 app = Flask(__name__)
 
-# Check if CUDA is available
-device = 0 if torch.cuda.is_available() else -1
+HUGGINGFACE_URL = "https://m4luzlf8i1z7v700.us-east-1.aws.endpoints.huggingface.cloud"
 
-# Initialize the LED-based summarization model
-hf_name = "pszemraj/led-base-book-summary"
-summarizer = pipeline(
-    "summarization",
-    hf_name,
-    device=device,
-    no_repeat_ngram_size=3,
-    repetition_penalty=3.5,
-    num_beams=4,
-    do_sample=False,
-    early_stopping=True
-)
+HEADERS = {
+    "Authorization": f"Bearer {os.environ['HUGGINGFACE_TOKEN']}",
+    "Content-Type": "application/json"
+}
 
 @app.route('/', methods=['POST'])
 def summarize():
@@ -28,24 +18,29 @@ def summarize():
     text = data['text']
     num_sentences = data.get('num_sentences', 10)  # Default is 10 if not provided
 
-    # Using the LED-based model to summarize the text
-    summary = summarizer(
-        text,
-        min_length=8,
-        max_length=num_sentences*50,  # Assuming an average sentence has ~50 tokens. Adjust accordingly.
-        encoder_no_repeat_ngram_size=3
-    )
+    payload = {
+        "inputs": text,
+        "options": {
+            "min_length": 8,
+            "max_length": num_sentences * 50,  # Assuming an average sentence has ~50 tokens. Adjust accordingly.
+            "encoder_no_repeat_ngram_size": 3
+        }
+    }
 
-    sentences = summary[0]["generated_text"].split('. ')
+    response = requests.post(HUGGINGFACE_URL, headers=HEADERS, json=payload)
+    result = response.json()
+
+    sentences = result[0]["generated_text"].split('. ')
 
     # Ensure the number of sentences matches the required count
     while len(sentences) < num_sentences:
-        sentences.append(' ')  # or sentences.append(null);
+        sentences.append(' ')
 
     return jsonify({"summary": sentences})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
+
 
 
 
