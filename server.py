@@ -30,7 +30,7 @@ def summarize():
     response = requests.post(HUGGINGFACE_URL, headers=HEADERS, json=payload)
     result = response.json()
 
-    sentences = result[0]["generated_text"].split('. ')
+    sentences = result[0]["summary_text"].split('. ')
 
     # Ensure the number of sentences matches the required count
     while len(sentences) < num_sentences:
