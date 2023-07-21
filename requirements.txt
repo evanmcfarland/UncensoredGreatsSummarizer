@@ -3,5 +3,3 @@ flask
 gunicorn
 nltk
 numpy
-transformers
-torch
