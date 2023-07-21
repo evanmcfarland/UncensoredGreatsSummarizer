@@ -16,12 +16,12 @@ HEADERS = {
 def summarize():
     data = request.get_json()
     text = data['text']
-    num_sentences = data.get('num_sentences', 10)  # Default is 10 if not provided
+    num_sentences = data.get('num_sentences', 1)  # Default is 10 if not provided
 
     payload = {
         "inputs": text,
         "options": {
-            "min_length": 8,
+            "min_length": num_sentences * 5,
             "max_length": num_sentences * 50,  # Assuming an average sentence has ~50 tokens. Adjust accordingly.
             "encoder_no_repeat_ngram_size": 3
         }
