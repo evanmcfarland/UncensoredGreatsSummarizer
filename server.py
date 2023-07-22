@@ -21,7 +21,7 @@ def summarize():
     payload = {
         "inputs": text,
         "options": {
-            "min_length": num_sentences * 5,
+            "min_length": num_sentences * 3,
             "max_length": num_sentences * 50,  # Assuming an average sentence has ~50 tokens. Adjust accordingly.
             "encoder_no_repeat_ngram_size": 3
         }
@@ -30,11 +30,12 @@ def summarize():
     response = requests.post(HUGGINGFACE_URL, headers=HEADERS, json=payload)
     result = response.json()
 
-    sentences = result[0]["summary_text"].split('. ')
-
-    # Ensure the number of sentences matches the required count
-    while len(sentences) < num_sentences:
-        sentences.append(' ')
+    summary = result[0]["summary_text"]
+    
+    # # OG, but there should be no need to split sentences now. 
+    # sentences = result[0]["summary_text"].split('. ')
+    # while len(sentences) < num_sentences:
+    #     sentences.append(' ')
 
     return jsonify({"summary": sentences})
 
