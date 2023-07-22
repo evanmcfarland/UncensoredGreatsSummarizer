@@ -10,7 +10,7 @@ def summarize():
     num_sentences = data.get('num_sentences', 1)  # Default is 10 if not provided
 
     # Adjusting the min_length based on the num_sentences parameter
-    min_length_multiplier = 10 if num_sentences > 10 else 3
+    min_length_multiplier = 10 if num_sentences == 20 else 3
 
     payload = {
         "inputs": text,
