@@ -30,12 +30,10 @@ def summarize():
     response = requests.post(HUGGINGFACE_URL, headers=HEADERS, json=payload)
     result = response.json()
 
-    summary = result[0]["summary_text"]
     
-    # # OG, but there should be no need to split sentences now. 
-    # sentences = result[0]["summary_text"].split('. ')
-    # while len(sentences) < num_sentences:
-    #     sentences.append(' ')
+    sentences = result[0]["summary_text"].split('. ')
+    while len(sentences) < num_sentences:
+        sentences.append(' ')
 
     return jsonify({"summary": sentences})
 
