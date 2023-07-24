@@ -3,20 +3,28 @@ from flask import Flask, request, jsonify
 import requests
 import os
 
+app = Flask(__name__)
+
+HUGGINGFACE_URL = "https://m4luzlf8i1z7v700.us-east-1.aws.endpoints.huggingface.cloud"
+
+HEADERS = {
+    "Authorization": f"Bearer {os.environ['HUGGINGFACE_TOKEN']}",
+    "Content-Type": "application/json"
+}
+
 @app.route('/', methods=['POST'])
 def summarize():
     data = request.get_json()
     text = data['text']
     num_sentences = data.get('num_sentences', 1)  # Default is 10 if not provided
 
-    # Adjusting the min_length based on the num_sentences parameter
     min_length_multiplier = 10 if num_sentences == 20 else 3
 
     payload = {
         "inputs": text,
         "options": {
             "min_length": num_sentences * min_length_multiplier,
-            "max_length": num_sentences * 50,  # Assuming an average sentence has ~50 tokens. Adjust accordingly.
+            "max_length": num_sentences * 50,
             "encoder_no_repeat_ngram_size": 3
         }
     }
@@ -29,6 +37,9 @@ def summarize():
         sentences.append(' ')
 
     return jsonify({"summary": sentences})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
 
 
 
