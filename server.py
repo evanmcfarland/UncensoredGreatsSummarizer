@@ -92,5 +92,45 @@ def summarize():
 
     return jsonify({"summary": sentences})
 
+
+
+
+
+
+
+
+# New Word2Vec-based endpoint for Semantic Library
+@app.route('/get_related_authors', methods=['POST'])
+def get_related_authors():
+    data = request.json
+    query = data['query']
+
+    author_scores = {}
+    for author in AUTHOR_INFO:  # Ensure that AUTHOR_INFO is accessible here
+        score = compute_similarity(query, author["id"], model)
+        author_scores[author["id"]] = score
+
+    sorted_authors = sorted(author_scores.keys(), key=lambda x: author_scores[x], reverse=True)
+
+    return jsonify(sorted_authors[:3])
+
+def compute_similarity(query, author_name, model):
+    query_vector = average_vector(query, model)
+    author_vector = average_vector(author_name, model)
+    
+    similarity = cosine_similarity(query_vector, author_vector)
+    return similarity
+
+def average_vector(text, model):
+    words = text.split()
+    vector = sum([model[word] for word in words if word in model.vocab]) / len(words)
+    return vector
+
+
+
+
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
