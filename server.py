@@ -63,6 +63,8 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lex_rank import LexRankSummarizer
 
+from author_similarity import get_most_related_authors_glove 
+
 app = Flask(__name__)
 
 # Limiting the number of sentences to the availible ones:
@@ -91,6 +93,17 @@ def summarize():
             added_sentences.add(str_sentence)
 
     return jsonify({"summary": sentences})
+
+
+
+@app.route('/related_authors', methods=['POST'])
+def related_authors():
+    data = request.json
+    query = data['query']
+    authors = data['authors']
+
+    most_related_authors = get_most_related_authors_glove(query, authors)
+    return jsonify(most_related_authors)
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
