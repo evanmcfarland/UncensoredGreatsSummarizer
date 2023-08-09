@@ -3,7 +3,7 @@ from gensim.models import KeyedVectors
 from scipy.spatial.distance import cosine
 
 # Assuming you have downloaded the GloVe embeddings and converted them to word2vec format:
-MODEL_PATH = "glove.6B.50d.word2vec.txt"
+MODEL_PATH = "https://uncensoredgreatsebooks.s3.us-east-2.amazonaws.com/glove.6B.50d.word2vec.txt"
 model = KeyedVectors.load_word2vec_format(MODEL_PATH, binary=False)
 
 def get_vector(text):
