@@ -3,3 +3,4 @@ flask
 gunicorn
 nltk
 numpy
+gensim
