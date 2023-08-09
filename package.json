@@ -1,5 +1,0 @@
-{
-  "scripts": {
-    "heroku-postbuild": "curl -O https://uncensoredgreatsebooks.s3.us-east-2.amazonaws.com/glove.6B.50d.word2vec.txt"
-  }
-}
