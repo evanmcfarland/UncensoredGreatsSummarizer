@@ -108,7 +108,7 @@ from nltk.corpus import wordnet as wn
 from os.path import join
 
 # Setting the nltk data path to your custom location
-nltk.data.path.append(join("wordnet", "nltk_data"))
+nltk.data.path.append(join("wordnet"))
 
 app = Flask(__name__)
 
