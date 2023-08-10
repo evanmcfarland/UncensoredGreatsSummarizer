@@ -104,10 +104,8 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from nltk.corpus import wordnet as wn
-from os.path import join
 
-nltk.data.path = ['/app/corpora/wordnet']
-
+nltk.data.path.append('/app/nltk_data')
 
 app = Flask(__name__)
 
@@ -152,9 +150,16 @@ def get_related_authors():
     return jsonify({"related_authors": related_authors})
 
 def get_word_similarity(word1, word2):
-    w1 = wn.synsets(word1)[0]
-    w2 = wn.synsets(word2)[0]
+    w1_synsets = wn.synsets(word1)
+    w2_synsets = wn.synsets(word2)
+
+    if not w1_synsets or not w2_synsets:
+        return 0  # or some other default similarity score
+
+    w1 = w1_synsets[0]
+    w2 = w2_synsets[0]
     return w1.wup_similarity(w2)
+
 
 def get_most_related_authors(query, authors_categories, num=3):
     query_terms = query.split()
