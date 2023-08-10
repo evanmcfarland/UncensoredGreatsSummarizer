@@ -106,7 +106,7 @@ from sumy.summarizers.lex_rank import LexRankSummarizer
 from nltk.corpus import wordnet as wn
 from os.path import join
 
-nltk.data.path = ['/app/wordnet']
+nltk.data.path = ['/app/corpora/wordnet']
 
 
 app = Flask(__name__)
