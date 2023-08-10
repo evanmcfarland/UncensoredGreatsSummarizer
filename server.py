@@ -108,7 +108,9 @@ from nltk.corpus import wordnet as wn
 from os.path import join
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-nltk.data.path.append(join(BASE_DIR, "wordnet"))
+nltk.data.path = [join(BASE_DIR, "wordnet")]
+print(nltk.data.path)
+
 
 app = Flask(__name__)
 
