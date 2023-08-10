@@ -98,7 +98,6 @@
 
 
 import nltk
-import os
 
 from flask import Flask, request, jsonify
 from sumy.parsers.plaintext import PlaintextParser
@@ -107,9 +106,7 @@ from sumy.summarizers.lex_rank import LexRankSummarizer
 from nltk.corpus import wordnet as wn
 from os.path import join
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-nltk.data.path = [join(BASE_DIR, "wordnet")]
-print(nltk.data.path)
+nltk.data.path = ['/app/wordnet']
 
 
 app = Flask(__name__)
