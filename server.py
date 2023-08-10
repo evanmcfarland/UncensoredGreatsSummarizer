@@ -56,16 +56,62 @@
 
 
 
-# LexRank OG
+# # Just LexRank OG
+
+# from flask import Flask, request, jsonify
+# from sumy.parsers.plaintext import PlaintextParser
+# from sumy.nlp.tokenizers import Tokenizer
+# from sumy.summarizers.lex_rank import LexRankSummarizer
+
+# app = Flask(__name__)
+
+# # Limiting the number of sentences to the availible ones:
+# @app.route('/', methods=['POST'])
+# def summarize():
+#     data = request.get_json()
+#     text = data['text']
+#     num_sentences = data['num_sentences']
+
+#     parser = PlaintextParser.from_string(text, Tokenizer("english"))
+#     summarizer = LexRankSummarizer()
+
+#     all_sentences = list(parser.document.sentences)
+#     summary = summarizer(parser.document, min(num_sentences, len(all_sentences))) # Limit number of sentences to available ones.
+
+#     # Sort the summary sentences by their original order in the text
+#     ordered_summary = sorted(summary, key=all_sentences.index)
+
+#     # Filter out duplicate sentences and convert them to strings
+#     added_sentences = set() 
+#     sentences = []
+#     for sentence in ordered_summary:
+#         str_sentence = str(sentence)
+#         if str_sentence not in added_sentences:
+#             sentences.append(str_sentence)
+#             added_sentences.add(str_sentence)
+
+#     return jsonify({"summary": sentences})
+    
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=8080)
+
+
+
+
 
 from flask import Flask, request, jsonify
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lex_rank import LexRankSummarizer
+import nltk
+from nltk.corpus import wordnet as wn
+from os.path import join
+
+# Setting the nltk data path to your custom location
+nltk.data.path.append(join("wordnet", "nltk_data"))
 
 app = Flask(__name__)
 
-# Limiting the number of sentences to the availible ones:
 @app.route('/', methods=['POST'])
 def summarize():
     data = request.get_json()
@@ -91,6 +137,37 @@ def summarize():
             added_sentences.add(str_sentence)
 
     return jsonify({"summary": sentences})
+
+
+@app.route('/related-authors', methods=['POST'])
+def get_related_authors():
+    data = request.json
+    query = data['query']
+
+    # Extracting author data from the request
+    authors_data = data['authors']
+    authors_categories = {author['name']: author['category'] for author in authors_data}
+
+    related_authors = get_most_related_authors(query, authors_categories)
+
+    return jsonify({"related_authors": related_authors})
+
+def get_word_similarity(word1, word2):
+    w1 = wn.synsets(word1)[0]
+    w2 = wn.synsets(word2)[0]
+    return w1.wup_similarity(w2)
+
+def get_most_related_authors(query, authors_categories, num=3):
+    query_terms = query.split()
+    scores = {}
+
+    for author, categories in authors_categories.items():
+        score = sum(get_word_similarity(term, category) 
+                    for term in query_terms for category in categories if wn.synsets(term) and wn.synsets(category))
+        scores[author] = score
     
+    sorted_authors = sorted(scores, key=scores.get, reverse=True)
+    return sorted_authors[:num]
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
