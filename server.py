@@ -97,13 +97,13 @@
 
 
 
-
+import nltk
+import os
 
 from flask import Flask, request, jsonify
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lex_rank import LexRankSummarizer
-import nltk
 from nltk.corpus import wordnet as wn
 from os.path import join
 
