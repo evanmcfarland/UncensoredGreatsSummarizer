@@ -107,8 +107,8 @@ from sumy.summarizers.lex_rank import LexRankSummarizer
 from nltk.corpus import wordnet as wn
 from os.path import join
 
-# Setting the nltk data path to your custom location
-nltk.data.path.append(join(os.getcwd(), "wordnet"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+nltk.data.path.append(join(BASE_DIR, "wordnet"))
 
 app = Flask(__name__)
 
